@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>zCCP_CHT_Training_Phrase</fullName>
+    <columns>NAME</columns>
+    <columns>zCCP_CHT_Parent_Chat_Config__c</columns>
+    <columns>zCCP_CHT_Active__c</columns>
+    <columns>zCCP_CHT_Training_Phrase__c</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>zCCP_CHT_Type__c</field>
+        <operation>equals</operation>
+        <value>zCCP_CHT_Training_Phrase</value>
+    </filters>
+    <label>Training Phrase</label>
+</ListView>

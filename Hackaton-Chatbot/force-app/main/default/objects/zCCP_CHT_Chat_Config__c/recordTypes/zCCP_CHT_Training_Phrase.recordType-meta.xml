@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<RecordType xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>zCCP_CHT_Training_Phrase</fullName>
+    <active>true</active>
+    <label>Training Phrase</label>
+    <picklistValues>
+        <picklist>zCCP_CHT_Action_Type__c</picklist>
+        <values>
+            <fullName>zCCP_CHT_Answer</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>zCCP_CHT_Query</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>zCCP_CHT_URL</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>zCCP_CHT_Type__c</picklist>
+        <values>
+            <fullName>zCCP_CHT_Training_Phrase</fullName>
+            <default>true</default>
+        </values>
+    </picklistValues>
+</RecordType>
