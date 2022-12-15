@@ -17,6 +17,7 @@ public with sharing class zCCP_CHT_Utils {
                                                     zCCP_CHT_Training_Map_Key__c, 
                                                     zCCP_CHT_Training_Map_Value__c, 
                                                     zCCP_CHT_Training_Phrase__c, 
+                                                    zCCP_CHT_Training_Phrase_Keywords__c,
                                                     zCCP_CHT_Type__c       
                                             FROM zCCP_CHT_Chat_Config__c 
                                             WHERE zCCP_CHT_Active__c = true]){
@@ -81,9 +82,7 @@ public with sharing class zCCP_CHT_Utils {
              * Training Phrase | Sentence
              */
             else{
-                /**
-                 * @TODO:
-                 */
+                processPhrase(context, message.toLowerCase());
             }
         }
 
@@ -363,6 +362,77 @@ public with sharing class zCCP_CHT_Utils {
     }
 
     /************************************************************************************************************************
+     * UTILITY PHRASE METHODS
+     ***********************************************************************************************************************/
+    private static void processPhrase(zCCP_CHT_Wrapper context, String message){
+
+        zCCP_CHT_Wrapper.zCCP_CHT_Wrapper_Training_Phrase matchPhrase = getMatchingPhrase(context, message);
+
+        if(matchPhrase != null){
+            zCCP_CHT_Wrapper.zCCP_CHT_Wrapper_Action action = context.actionMap.get(matchPhrase.actionId);
+
+            switch on action.type {
+                when 'zCCP_CHT_URL'{
+                    constructURLAnswer(context, action);
+                }
+                when 'zCCP_CHT_Answer' {
+                    constructTextAnswer(context, action);
+                }
+                when 'zCCP_CHT_Query'{
+                    constructSOQLAnswer(context, message, action);
+                }
+            }
+        }
+        else{
+            context.response = 'Unable to resolve Phrase';
+        }
+    }
+
+    private static zCCP_CHT_Wrapper.zCCP_CHT_Wrapper_Training_Phrase getMatchingPhrase(zCCP_CHT_Wrapper context, String message){
+
+        zCCP_CHT_Wrapper.zCCP_CHT_Wrapper_Training_Phrase matchPhrase;
+
+        List<String> messageWords = message.split(' ');
+
+        Integer matchCounter;
+        List<String> allKeyWords; 
+        zCCP_CHT_Wrapper.zCCP_CHT_Wrapper_Training_Phrase currentPhrase;
+
+        Integer maxCounter = 0;
+
+        for(String phrase : context.trainingPhraseMap.keySet()){
+            matchCounter = 0;
+            
+            currentPhrase = context.trainingPhraseMap.get(phrase);
+            if(currentPhrase.keywords.contains(zCCP_CHT_Constants.KEYWORD_SPLITTER)){
+                allKeyWords = currentPhrase.keywords.toLowerCase().split(zCCP_CHT_Constants.KEYWORD_SPLITTER);
+            }
+            else{
+                allKeyWords = new List<String>{currentPhrase.keywords.toLowerCase()};
+            }
+
+            for(String word : messageWords){
+                for(String keyWord : allKeyWords){
+                    if(keyWord.contains(word)){
+                        matchCounter += 10;
+                    }
+                }
+                if(currentPhrase.phrase.contains(word)){
+                    matchCounter += 1;
+                }
+            }
+
+            if(matchCounter > maxCounter){
+                maxCounter = matchCounter;
+                matchPhrase = currentPhrase;
+            }
+        }
+
+        return matchPhrase;
+    }
+
+
+    /************************************************************************************************************************
      * UTILITY SORT METHODS
      ***********************************************************************************************************************/
     private static List<zCCP_CHT_Wrapper.zCCP_CHT_Wrapper_Menu> sortMenus(List<zCCP_CHT_Wrapper.zCCP_CHT_Wrapper_Menu> menus){
@@ -452,13 +522,15 @@ public with sharing class zCCP_CHT_Utils {
 
         zCCP_CHT_Wrapper.zCCP_CHT_Wrapper_Action action = new zCCP_CHT_Wrapper.zCCP_CHT_Wrapper_Action((String) cConf.Id, (String) cConf.zCCP_CHT_Parent_Chat_Config__c, cConf.name, cConf.zCCP_CHT_Action_Type__c, cConf.zCCP_CHT_Action_Answer__c, cConf.zCCP_CHT_SOQL__c, cConf.zCCP_CHT_Header_Message__c);
 
-        if(!context.subMenuWithActionMap.containsKey(action.subMenuId)){
-            context.subMenuWithActionMap.put(action.subMenuId, new Map<String, zCCP_CHT_Wrapper.zCCP_CHT_Wrapper_Action>());
-        }
+        if(action.subMenuId != null){
+            if(!context.subMenuWithActionMap.containsKey(action.subMenuId)){
+                context.subMenuWithActionMap.put(action.subMenuId, new Map<String, zCCP_CHT_Wrapper.zCCP_CHT_Wrapper_Action>());
+            }
 
-        Map<String, zCCP_CHT_Wrapper.zCCP_CHT_Wrapper_Action> intermediateMap = context.subMenuWithActionMap.get(action.subMenuId);
-        intermediateMap.put(action.recordId, action);
-        context.subMenuWithActionMap.put(action.subMenuId, intermediateMap);
+            Map<String, zCCP_CHT_Wrapper.zCCP_CHT_Wrapper_Action> intermediateMap = context.subMenuWithActionMap.get(action.subMenuId);
+            intermediateMap.put(action.recordId, action);
+            context.subMenuWithActionMap.put(action.subMenuId, intermediateMap);
+        }
 
         if(!context.actionMap.containsKey(action.recordId)){
             context.actionMap.put(action.recordId, action);
@@ -476,7 +548,7 @@ public with sharing class zCCP_CHT_Utils {
 
     private static void processInitTrainingPhrase(zCCP_CHT_Wrapper context, zCCP_CHT_Chat_Config__c cConf){
 
-        zCCP_CHT_Wrapper.zCCP_CHT_Wrapper_Training_Phrase tPhrase = new zCCP_CHT_Wrapper.zCCP_CHT_Wrapper_Training_Phrase((String) cConf.Id, (String) cConf.zCCP_CHT_Parent_Chat_Config__c, cConf.zCCP_CHT_Training_Phrase__c);
+        zCCP_CHT_Wrapper.zCCP_CHT_Wrapper_Training_Phrase tPhrase = new zCCP_CHT_Wrapper.zCCP_CHT_Wrapper_Training_Phrase((String) cConf.Id, (String) cConf.zCCP_CHT_Parent_Chat_Config__c, cConf.zCCP_CHT_Training_Phrase__c.toLowerCase(), cConf.zCCP_CHT_Training_Phrase_Keywords__c);
 
         if(!context.trainingPhraseMap.containsKey(tPhrase.phrase.toLowerCase())){
             context.trainingPhraseMap.put(tPhrase.phrase.toLowerCase(), tPhrase);

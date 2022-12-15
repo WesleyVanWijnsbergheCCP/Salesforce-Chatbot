@@ -186,10 +186,14 @@ public class zCCP_CHT_Wrapper {
         @AuraEnabled
         public String phrase;
 
-        public zCCP_CHT_Wrapper_Training_Phrase(String recordId, String actionId, String phrase){
+        @AuraEnabled
+        public String keywords;
+
+        public zCCP_CHT_Wrapper_Training_Phrase(String recordId, String actionId, String phrase, String keywords){
             this.recordId = recordId;
             this.actionId = actionId; 
             this.phrase = phrase;
+            this.keywords = keywords;
         }
     }
 
