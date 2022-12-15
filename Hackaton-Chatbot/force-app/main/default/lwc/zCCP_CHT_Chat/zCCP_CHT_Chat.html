@@ -1,38 +1,40 @@
 <template>
     <div class="slds-box">
-        <section role="log" class="slds-chat">
-            <ul class="slds-chat-list">
-                <template for:each={conversation} for:item="conversationItem" for:index="conversationIndex">
-                    <template if:false={conversationItem.isInbound}>
-                        <li class="slds-chat-listitem slds-chat-listitem_outbound" key={conversationItem}>
-                            <div class="slds-chat-message">
-                                <div class="slds-chat-message__body">
-                                <div class="slds-chat-message__text slds-chat-message__text_outbound">
-                                    <span>{conversationItem.message}</span>
-                                </div>
-                                <div class="slds-chat-message__meta">{conversationItem.timestamp}</div>
-                                </div>
-                            </div>
-                        </li>
-                    </template>
-                    <template if:true={conversationItem.isInbound}>
-                        <li class="slds-chat-listitem slds-chat-listitem_inbound" key={conversationItem}>
-                            <div class="slds-chat-message">
-                                <span aria-hidden="true" class="slds-avatar slds-avatar_circle slds-chat-avatar">
-                                    <abbr class="slds-avatar__initials slds-avatar__initials_inverse" title="Ask Indra">AI</abbr>
-                                </span>
-                                <div class="slds-chat-message__body">
-                                    <div class="slds-chat-message__text slds-chat-message__text_inbound">
+        <div class="slds-scrollable_y" style="height:20rem;">
+            <section role="log" class="slds-chat">
+                <ul class="slds-chat-list">
+                    <template for:each={conversation} for:item="conversationItem" for:index="conversationIndex">
+                        <template if:false={conversationItem.isInbound}>
+                            <li class="slds-chat-listitem slds-chat-listitem_outbound" key={conversationItem}>
+                                <div class="slds-chat-message">
+                                    <div class="slds-chat-message__body">
+                                    <div class="slds-chat-message__text slds-chat-message__text_outbound">
                                         <span>{conversationItem.message}</span>
                                     </div>
                                     <div class="slds-chat-message__meta">{conversationItem.timestamp}</div>
+                                    </div>
                                 </div>
-                            </div>
-                        </li>
+                            </li>
+                        </template>
+                        <template if:true={conversationItem.isInbound}>
+                            <li class="slds-chat-listitem slds-chat-listitem_inbound" key={conversationItem}>
+                                <div class="slds-chat-message">
+                                    <span aria-hidden="true" class="slds-avatar slds-avatar_circle slds-chat-avatar">
+                                        <abbr class="slds-avatar__initials slds-avatar__initials_inverse" title="Ask Indra">AI</abbr>
+                                    </span>
+                                    <div class="slds-chat-message__body">
+                                        <div class="slds-chat-message__text slds-chat-message__text_inbound">
+                                            <span>{conversationItem.message}</span>
+                                        </div>
+                                        <div class="slds-chat-message__meta">{conversationItem.timestamp}</div>
+                                    </div>
+                                </div>
+                            </li>
+                        </template>
                     </template>
-                </template>
-            </ul>
-        </section>
+                </ul>
+            </section>
+        </div>
         <lightning-layout vertical-align="start">
             <lightning-layout-item size="10" padding="horizontal-small">
                 <lightning-input 
@@ -40,6 +42,7 @@
                     placeholder="Ask Indra..." 
                     value={userMessage}
                     onchange={setMessage}
+                    onkeypress={processEnter}
                 ></lightning-input>
             </lightning-layout-item>
             <lightning-layout-item size="1" padding="horizontal-small">

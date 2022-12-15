@@ -51,6 +51,12 @@ export default class ZCCP_CHT_Chat extends LightningElement {
         this.userMessage = event.detail.value;
     }
 
+    processEnter(event){
+        if(event.keyCode === 13 && !this.disableButton){
+            this.submitMessage(event);
+        }
+    }
+
     submitMessage(event){
         this.setRequest(this.userMessage);
         processChat({contextString : JSON.stringify(this.context), message : this.userMessage})
