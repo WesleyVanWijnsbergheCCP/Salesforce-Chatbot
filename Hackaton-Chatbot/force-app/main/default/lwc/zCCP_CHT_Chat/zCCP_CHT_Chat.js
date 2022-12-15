@@ -31,6 +31,10 @@ export default class ZCCP_CHT_Chat extends LightningElement {
     }
 
     connectedCallback(){
+        this.initChatter();
+    }
+
+    initChatter(){
         initChat()
             .then(context => {
                 this.context = context;
