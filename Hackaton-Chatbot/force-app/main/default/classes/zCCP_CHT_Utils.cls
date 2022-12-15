@@ -59,15 +59,31 @@ public with sharing class zCCP_CHT_Utils {
             throw new zCCP_CHT_UtilsException('Context is null...');
         }
 
+        message = message.trim();
+
         if(message.isNumeric()){
             processMenu(context, message);
         }
         else{
             /**
-             * @TODO:
+             * Respond based on Answer
              */
             if(context.expectsAnswer){
                 constructSOQLAnswer(context, message, context.actionMap.get(context.currentAction));
+            }
+            /**
+             * Tag | Single Word
+             */
+            else if(!message.containsWhitespace()){
+                processTag(context, message.toLowerCase());
+            }
+            /**
+             * Training Phrase | Sentence
+             */
+            else{
+                /**
+                 * @TODO:
+                 */
             }
         }
 
@@ -92,9 +108,7 @@ public with sharing class zCCP_CHT_Utils {
         else {
             Integer selection = Integer.valueOf(message);
             if(selection <= 0 || selection > context.currentMenuSelection.size()){
-                /**
-                 * @TODO: Error Handling Out-of-Bounds
-                 */
+                context.response = 'Index out of bounds';
             }
             else{
                 selection -= 1; //We offset Frontend selection with 1
@@ -297,6 +311,58 @@ public with sharing class zCCP_CHT_Utils {
     }
 
     /************************************************************************************************************************
+     * UTILITY TAG METHODS
+     ***********************************************************************************************************************/
+    private static void processTag(zCCP_CHT_Wrapper context, String message){
+
+        if(context.tagMap.containsKey(message)){
+            zCCP_CHT_Wrapper.zCCP_CHT_Wrapper_Tag tag = context.tagMap.get(message);
+
+            String response = '';
+
+            zCCP_CHT_Wrapper.zCCP_CHT_Wrapper_Menu menu = context.menuMap.get(tag.subMenuId);
+            if(menu != null){
+                if(menu.message != null){
+                    response += menu.message + '\n\n';
+                }
+            }
+            else{
+                zCCP_CHT_Wrapper.zCCP_CHT_Wrapper_Sub_Menu subMenu = context.subMenuMap.get(tag.subMenuId);
+                if(subMenu.message != null){
+                    response += subMenu.message + '\n\n';
+                }
+            }
+
+            context.currentMenu = tag.subMenuId;
+
+            Map<String, zCCP_CHT_Wrapper.zCCP_CHT_Wrapper_Sub_Menu> subMenuMap = context.menuWithSubMenuMap.get(context.currentMenu);
+
+            /**
+             * Submenu has submenu's
+             */
+            if(subMenuMap != null){
+                constructSubMenu(context, response, subMenuMap);
+            }
+            /**
+             * Submenu has action
+             */
+            else{
+                Map<String, zCCP_CHT_Wrapper.zCCP_CHT_Wrapper_Action>  subMenuActionMap = context.subMenuWithActionMap.get(context.currentMenu); 
+
+                /**
+                 * Found an Action
+                 */
+                if(subMenuActionMap != null){
+                    processAction(context, message, subMenuActionMap);
+                }
+            }
+        }
+        else{
+            context.response = 'Unable to resolve Tag';
+        }
+    }
+
+    /************************************************************************************************************************
      * UTILITY SORT METHODS
      ***********************************************************************************************************************/
     private static List<zCCP_CHT_Wrapper.zCCP_CHT_Wrapper_Menu> sortMenus(List<zCCP_CHT_Wrapper.zCCP_CHT_Wrapper_Menu> menus){
@@ -403,8 +469,8 @@ public with sharing class zCCP_CHT_Utils {
 
         zCCP_CHT_Wrapper.zCCP_CHT_Wrapper_Tag tag = new zCCP_CHT_Wrapper.zCCP_CHT_Wrapper_Tag((String) cConf.Id, (String) cConf.zCCP_CHT_Parent_Chat_Config__c, cConf.name);
 
-        if(!context.tagMap.containsKey(tag.name)){
-            context.tagMap.put(tag.name, tag);
+        if(!context.tagMap.containsKey(tag.name.toLowerCase())){
+            context.tagMap.put(tag.name.toLowerCase(), tag);
         }
     }
 
@@ -412,8 +478,8 @@ public with sharing class zCCP_CHT_Utils {
 
         zCCP_CHT_Wrapper.zCCP_CHT_Wrapper_Training_Phrase tPhrase = new zCCP_CHT_Wrapper.zCCP_CHT_Wrapper_Training_Phrase((String) cConf.Id, (String) cConf.zCCP_CHT_Parent_Chat_Config__c, cConf.zCCP_CHT_Training_Phrase__c);
 
-        if(!context.trainingPhraseMap.containsKey(tPhrase.phrase)){
-            context.trainingPhraseMap.put(tPhrase.phrase, tPhrase);
+        if(!context.trainingPhraseMap.containsKey(tPhrase.phrase.toLowerCase())){
+            context.trainingPhraseMap.put(tPhrase.phrase.toLowerCase(), tPhrase);
         }
     }
 
