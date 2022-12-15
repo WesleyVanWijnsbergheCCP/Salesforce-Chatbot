@@ -1,0 +1,59 @@
+<template>
+    <div class="slds-box">
+        <section role="log" class="slds-chat">
+            <ul class="slds-chat-list">
+                <template for:each={conversation} for:item="conversationItem" for:index="conversationIndex">
+                    <template if:false={conversationItem.isInbound}>
+                        <li class="slds-chat-listitem slds-chat-listitem_outbound" key={conversationItem}>
+                            <div class="slds-chat-message">
+                                <div class="slds-chat-message__body">
+                                <div class="slds-chat-message__text slds-chat-message__text_outbound">
+                                    <span>{conversationItem.message}</span>
+                                </div>
+                                <div class="slds-chat-message__meta">{conversationItem.timestamp}</div>
+                                </div>
+                            </div>
+                        </li>
+                    </template>
+                    <template if:true={conversationItem.isInbound}>
+                        <li class="slds-chat-listitem slds-chat-listitem_inbound" key={conversationItem}>
+                            <div class="slds-chat-message">
+                                <span aria-hidden="true" class="slds-avatar slds-avatar_circle slds-chat-avatar">
+                                    <abbr class="slds-avatar__initials slds-avatar__initials_inverse" title="Ask Indra">AI</abbr>
+                                </span>
+                                <div class="slds-chat-message__body">
+                                    <div class="slds-chat-message__text slds-chat-message__text_inbound">
+                                        <span>{conversationItem.message}</span>
+                                    </div>
+                                    <div class="slds-chat-message__meta">{conversationItem.timestamp}</div>
+                                </div>
+                            </div>
+                        </li>
+                    </template>
+                </template>
+            </ul>
+        </section>
+        <lightning-layout vertical-align="start">
+            <lightning-layout-item size="11" padding="horizontal-small">
+                <lightning-input 
+                    type="text" 
+                    placeholder="Ask Indra..." 
+                    value={userMessage}
+                    onchange={setMessage}
+                ></lightning-input>
+            </lightning-layout-item>
+            <lightning-layout-item size="1" padding="horizontal-small">
+                <div class="slds-p-top_medium slds-m-top_xxx-small">
+                    <lightning-button-icon 
+                        icon-name="utility:send"  
+                        variant="brand" 
+                        alternative-text="Submit" 
+                        title="Submit" 
+                        onclick={submitMessage} 
+                        disabled={disableButton}
+                    ></lightning-button-icon>
+                </div>
+            </lightning-layout-item>
+        </lightning-layout>
+    </div>
+</template>
