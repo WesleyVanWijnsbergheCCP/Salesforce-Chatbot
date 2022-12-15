@@ -197,28 +197,6 @@ public class zCCP_CHT_Wrapper {
         }
     }
 
-    public class zCCP_CHT_Wrapper_Training_Mapping{
-
-        @AuraEnabled
-        public String recordId;
-
-        @AuraEnabled
-        public String trainingPhraseId; 
-
-        @AuraEnabled
-        public String key;
-
-        @AuraEnabled
-        public String value;
-
-        public zCCP_CHT_Wrapper_Training_Mapping(String recordId, String trainingPhraseId, String key, String value){
-            this.recordId = recordId;
-            this.trainingPhraseId = trainingPhraseId; 
-            this.key = key;
-            this.value = value;
-        }
-    }
-
     public static zCCP_CHT_Wrapper parseSingle(String jsonString){
         if(jsonString != null && jsonString.length() > 3) { 
             return (zCCP_CHT_Wrapper) System.JSON.deserialize(jsonString, zCCP_CHT_Wrapper.class);

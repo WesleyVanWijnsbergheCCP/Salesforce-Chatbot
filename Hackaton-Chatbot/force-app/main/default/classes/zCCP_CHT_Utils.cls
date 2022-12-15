@@ -13,9 +13,7 @@ public with sharing class zCCP_CHT_Utils {
                                                     zCCP_CHT_Parent_Chat_Config__c,
                                                     zCCP_CHT_Header_Message__c,
                                                     zCCP_CHT_SOQL__c, 
-                                                    zCCP_CHT_Sort_Order__c, 
-                                                    zCCP_CHT_Training_Map_Key__c, 
-                                                    zCCP_CHT_Training_Map_Value__c, 
+                                                    zCCP_CHT_Sort_Order__c,
                                                     zCCP_CHT_Training_Phrase__c, 
                                                     zCCP_CHT_Training_Phrase_Keywords__c,
                                                     zCCP_CHT_Type__c       
@@ -36,12 +34,6 @@ public with sharing class zCCP_CHT_Utils {
                 }
                 when 'zCCP_CHT_Training_Phrase' {
                     processInitTrainingPhrase(context, cConf);
-                }
-                when 'zCCP_CHT_Training_Phrase_Mapping' { 
-                    /**
-                     * @TODO:
-                     */
-                    processInitTrainingMap(context, cConf);
                 }
                 when else{
                     throw new zCCP_CHT_UtilsException('Unknown Type...');
@@ -553,9 +545,5 @@ public with sharing class zCCP_CHT_Utils {
         if(!context.trainingPhraseMap.containsKey(tPhrase.phrase.toLowerCase())){
             context.trainingPhraseMap.put(tPhrase.phrase.toLowerCase(), tPhrase);
         }
-    }
-
-    private static void processInitTrainingMap(zCCP_CHT_Wrapper context, zCCP_CHT_Chat_Config__c cConf){
-
     }
 }
