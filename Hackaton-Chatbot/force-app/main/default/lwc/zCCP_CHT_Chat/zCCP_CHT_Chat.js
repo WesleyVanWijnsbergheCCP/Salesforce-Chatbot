@@ -39,7 +39,7 @@ export default class ZCCP_CHT_Chat extends LightningElement {
             .then(context => {
                 this.context = context;
                 this.userName = context.userName;
-                this.setResponse(context.response);
+                this.setResponse(context.response, context);
             })
             .catch(error => {
                 this.error = error;
@@ -62,7 +62,7 @@ export default class ZCCP_CHT_Chat extends LightningElement {
         processChat({contextString : JSON.stringify(this.context), message : this.userMessage})
             .then(context => {
                 this.context = context;
-                this.setResponse(context.response);
+                this.setResponse(context.response, context);
             })
             .catch(error => {
                 this.error = error;
@@ -89,12 +89,14 @@ export default class ZCCP_CHT_Chat extends LightningElement {
     /**
      * Bot Response
      */
-    setResponse(response){
+    setResponse(response, context){
         this.today = new Date();
         let resp = {
             message : response,
             isInbound : true, 
-            timestamp : "AskIndra • " + String(this.today.getHours()).padStart(2, '0') + ":" + String(this.today.getMinutes()).padStart(2, '0')
+            timestamp : "AskIndra • " + String(this.today.getHours()).padStart(2, '0') + ":" + String(this.today.getMinutes()).padStart(2, '0'), 
+            url : context.isUrlAnswer, 
+            label : context.URLLabel
         }
         this.conversation.push(resp);
     }

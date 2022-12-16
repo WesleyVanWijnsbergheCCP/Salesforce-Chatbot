@@ -15,6 +15,12 @@ public class zCCP_CHT_Wrapper {
     @AuraEnabled
     public Boolean expectsAnswer;
 
+    @AuraEnabled 
+    public Boolean isUrlAnswer;
+
+    @AuraEnabled
+    public String URLLabel;
+
     /**
      * [(sub)MenuId, (sub)MenuId, ...]
      */
@@ -65,6 +71,7 @@ public class zCCP_CHT_Wrapper {
 
     public zCCP_CHT_Wrapper(){
         this.expectsAnswer = false;
+        this.isUrlAnswer = false;
         this.currentMenuSelection = new List<String>();
         this.menuMap = new Map<String, zCCP_CHT_Wrapper_Menu>();
         this.subMenuMap = new Map<String, zCCP_CHT_Wrapper_Sub_Menu>();

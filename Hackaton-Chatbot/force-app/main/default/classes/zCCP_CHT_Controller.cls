@@ -19,6 +19,12 @@ public with sharing class zCCP_CHT_Controller {
         
         zCCP_CHT_Wrapper context = zCCP_CHT_Wrapper.parseSingle(contextString);
 
+        /**
+         * Clear url fields
+         */
+        context.isUrlAnswer = false;
+        context.URLLabel = null;
+
         try{
             return zCCP_CHT_Utils.processChatMessage(context, message);
         }

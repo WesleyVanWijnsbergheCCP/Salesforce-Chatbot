@@ -23,9 +23,14 @@
                                         <abbr class="slds-avatar__initials slds-avatar__initials_inverse" title="Ask Indra">AI</abbr>
                                     </span>
                                     <div class="slds-chat-message__body">
-                                        <div class="slds-chat-message__text slds-chat-message__text_inbound">
-                                            <span>{conversationItem.message}</span>
-                                        </div>
+                                        <template if:true={conversationItem.url}>
+                                            <a href={conversationItem.message} target="_blank">{conversationItem.label}</a>
+                                        </template>
+                                        <template if:false={conversationItem.url}>
+                                            <div class="slds-chat-message__text slds-chat-message__text_inbound">
+                                                <span>{conversationItem.message}</span>
+                                            </div>
+                                        </template>
                                         <div class="slds-chat-message__meta">{conversationItem.timestamp}</div>
                                     </div>
                                 </div>

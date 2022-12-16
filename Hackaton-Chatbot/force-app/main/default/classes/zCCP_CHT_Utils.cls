@@ -212,7 +212,9 @@ public with sharing class zCCP_CHT_Utils {
     }
 
     private static void constructURLAnswer(zCCP_CHT_Wrapper context, zCCP_CHT_Wrapper.zCCP_CHT_Wrapper_Action action){
-        context.response = '<a href="' + action.answer + '">' + action.name + '</a>';
+        context.isUrlAnswer = true;
+        context.URLLabel = action.name;
+        context.response = action.answer;
     }
 
     private static void constructTextAnswer(zCCP_CHT_Wrapper context, zCCP_CHT_Wrapper.zCCP_CHT_Wrapper_Action action){
