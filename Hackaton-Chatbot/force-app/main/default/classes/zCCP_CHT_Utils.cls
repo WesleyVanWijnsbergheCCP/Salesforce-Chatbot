@@ -99,7 +99,8 @@ public with sharing class zCCP_CHT_Utils {
         else {
             Integer selection = Integer.valueOf(message);
             if(selection <= 0 || selection > context.currentMenuSelection.size()){
-                context.response = 'Index out of bounds';
+                //context.response = 'Index out of bounds';
+                redirectToIndra(context);
             }
             else{
                 selection -= 1; //We offset Frontend selection with 1
@@ -248,6 +249,12 @@ public with sharing class zCCP_CHT_Utils {
         context.currentAction = action.recordId;
     }
 
+    private static void redirectToIndra(zCCP_CHT_Wrapper context){
+        context.isUrlAnswer = true;
+        context.URLLabel = 'Oops... We couldn\t find a result. Click here to start chatting with Indra';
+        context.response = 'https://teams.microsoft.com/l/chat/0/0?users=indra.peeters@c-clearpartners.com';
+    }
+
     /************************************************************************************************************************
      * UTILITY SOQL METHODS
      ***********************************************************************************************************************/
@@ -264,7 +271,7 @@ public with sharing class zCCP_CHT_Utils {
                 processAnswer(context, sObjs[0], action.answer);
             }
             else{
-                context.response = 'Couldn\' find any results.';
+                redirectToIndra(context);
             }
         }
         /**
@@ -283,7 +290,7 @@ public with sharing class zCCP_CHT_Utils {
                 processAnswer(context, sObjs[0], action.answer);
             }
             else{
-                context.response = 'Couldn\' find any results.';
+                redirectToIndra(context);
             }
         }
     }
@@ -351,7 +358,7 @@ public with sharing class zCCP_CHT_Utils {
             }
         }
         else{
-            context.response = 'Unable to resolve Tag';
+            redirectToIndra(context);
         }
     }
 
@@ -378,7 +385,7 @@ public with sharing class zCCP_CHT_Utils {
             }
         }
         else{
-            context.response = 'Unable to resolve Phrase';
+            redirectToIndra(context);
         }
     }
 
@@ -389,6 +396,7 @@ public with sharing class zCCP_CHT_Utils {
         List<String> messageWords = message.split(' ');
 
         Integer matchCounter;
+        Integer keywordCounter;
         List<String> allKeyWords; 
         zCCP_CHT_Wrapper.zCCP_CHT_Wrapper_Training_Phrase currentPhrase;
 
@@ -396,6 +404,7 @@ public with sharing class zCCP_CHT_Utils {
 
         for(String phrase : context.trainingPhraseMap.keySet()){
             matchCounter = 0;
+            keywordCounter = 0;
             
             currentPhrase = context.trainingPhraseMap.get(phrase);
             if(currentPhrase.keywords.contains(zCCP_CHT_Constants.KEYWORD_SPLITTER)){
@@ -409,6 +418,7 @@ public with sharing class zCCP_CHT_Utils {
                 for(String keyWord : allKeyWords){
                     if(keyWord.contains(word)){
                         matchCounter += 10;
+                        keywordCounter += 1;
                     }
                 }
                 if(currentPhrase.phrase.contains(word)){
@@ -416,7 +426,7 @@ public with sharing class zCCP_CHT_Utils {
                 }
             }
 
-            if(matchCounter > maxCounter){
+            if(matchCounter > maxCounter && keywordCounter >= 1){
                 maxCounter = matchCounter;
                 matchPhrase = currentPhrase;
             }
